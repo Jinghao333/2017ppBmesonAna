@@ -14,9 +14,19 @@
 // };
 const unsigned nptBins = 7;
 const std::array<double, nptBins + 1> ptbinsvec = {
-  5, 7, 10, 15, 20, 30, 50, 60
-};
+  5, 7, 10, 15, 20, 30, 50, 60};
 
+const unsigned nptBinsBP = 7;
+const std::array<double, nptBinsBP + 1> ptbinsvecBP = {
+  5, 7, 10, 15, 20, 30, 50, 60};
+
+const unsigned nyBins_both = 8;
+const std::array<double, nyBins_both + 1> ybinsvec = {
+  -2.4,-1.5,-1.0,-0.5,0.0 ,0.5, 1.0, 1.5, 2.4};
+
+const unsigned nmBins_both = 7;
+const std::array<double, nmBins_both + 1> nmbinsvec = {
+  0,20,30,40,50,60,70,100};
 
 enum Tracking{
   loose = 0,

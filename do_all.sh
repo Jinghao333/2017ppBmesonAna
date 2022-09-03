@@ -28,9 +28,11 @@ bpEff () {
     # takes unskimmed MC sample as input
     echo "Takes BPw.root as input. Make sure it is up to date"
     ls -l BDTWeights/BPw.root
-    #root -b -l -q MCEff.C'(1,0)' > eff.log # >> bpsyst2d.root
+    root -b -l -q MCEff.C'(1,0)' > eff.log # >> bpsyst2d.root
     # CrossSectionAna.C contains 1 By cuts
     root -b -l -q CrossSectionAna.C'(1)'
+    root -b -l -q CrossSectionAna.C'(1, 1)'
+    root -b -l -q CrossSectionAna.C'(1, 2)'
     # root -b -l -q CrossSectionAnaMult.C'(1)'
     # >> BP/EffAna/FinalFiles/BPPPCorrYieldPT.root
     popd
@@ -48,7 +50,7 @@ bsEff () {
     pushd Bs/EffAna
     # about 1hr
     echo "Takes Bsw.root as input"
-    # root -b -l -q MCEff.C'(1,0)' > eff.log
+    root -b -l -q MCEff.C'(1,0)' > eff.log
     ls -l BDTWeights/Bsw.root
     root -b -l -q CrossSectionAna.C'(1)'
     # root -b -l -q CrossSectionAnaMult.C'(1)'
@@ -131,9 +133,9 @@ paperPlots () {
 # bsYield &
 # wait
 
-# bpEff &
-# bsEff &
-# wait
+bpEff &
+bsEff &
+wait
 
 nominal
 syst
