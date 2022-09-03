@@ -605,19 +605,6 @@ default:
 	}
 
 
-	for(int i = 0 ; i < NBins; i++){
-
-		cout << "--------------------------------------------------  Eff Systematics Uncertainties  -----------------------------------------------" << endl;
-
-
-		cout << "i = " << i << "    NewEffUp =   "  << NewEffUp[i]  <<    "    NewEffDown =   " <<  NewEffDown[i] << endl;
-
-		cout << "i = " << i << "    SystUp =   "  << (NewEffUp[i] - NewEff[i])/ NewEff[i] <<    "    NewEffDown =   " << (NewEff[i] - NewEffDown[i])/NewEff[i] << endl;
-		cout << "-----------------------------------------------------------------------------------------------------------------------------------" << endl;
-	}
-
-	//return;
-
 	hInvEff->SetMaximum(NewEff[0]*1.5);
 	TCanvas *c = new TCanvas("c","c",600,600);
 
