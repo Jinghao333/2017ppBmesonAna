@@ -42,6 +42,12 @@ std::map<unsigned, TString> varStr = {
   {BinVar::mult,"Mult"},
 };
 
+std::map<unsigned, TString> varInputStr = {
+  {BinVar::pt,"pt"},
+  {BinVar::y,"y"},
+  {BinVar::mult,"mult"},
+};
+
 std::map<unsigned, TString> titleStr = {
   {BinVar::pt,"p_{T}"},
   {BinVar::y,"y"},
@@ -642,7 +648,8 @@ default:
 
 		//TnP Syst DONE//
 
-  TString fYield = "../../henri2022/ROOTfiles/yields_Bp_binned_pt.root";
+  TString fYield = "../../henri2022/ROOTfiles/yields_Bp_binned_" +
+    varInputStr[var] + ".root";
 	TFile * RawYield = new TFile(fYield);
 	RawYield->cd();
 	TH1D * hPt = (TH1D *) RawYield->Get("hPt");
