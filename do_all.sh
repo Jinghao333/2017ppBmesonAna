@@ -53,6 +53,8 @@ bsEff () {
     root -b -l -q MCEff.C'(1,0)' > eff.log
     ls -l BDTWeights/Bsw.root
     root -b -l -q CrossSectionAna.C'(1)'
+    root -b -l -q CrossSectionAna.C'(1, 1)'
+    root -b -l -q CrossSectionAna.C'(1, 2)'
     # root -b -l -q CrossSectionAnaMult.C'(1)'
     # >> Bs/EffAna/FinalFiles/BsPPCorrYieldPT.root
     popd

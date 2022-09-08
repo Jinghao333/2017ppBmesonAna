@@ -26,10 +26,53 @@ using namespace std;
 using std::cout;
 using std::endl;
 
-void CrossSectionAna(int DoTnP){
+enum BinVar{
+  pt = 0,
+  y = 1,
+  mult = 2,
+};
 
-	const int NBins = 4;
-	//const int NBins = 6;
+std::map<unsigned, TString> varStr = {
+  {BinVar::pt,"PT"},
+  {BinVar::y,"Y"},
+  {BinVar::mult,"Mult"},
+};
+
+std::map<unsigned, TString> varInputStr = {
+  {BinVar::pt,"pt"},
+  {BinVar::y,"y"},
+  {BinVar::mult,"mult"},
+};
+
+std::map<unsigned, TString> titleStr = {
+  {BinVar::pt,"p_{T}"},
+  {BinVar::y,"y"},
+  {BinVar::mult,"Mult"},
+};
+
+void CrossSectionAna(int DoTnP, unsigned var=BinVar::pt){
+
+	unsigned NBins = 0;
+  double varBins[10];
+  switch (var) {
+  case BinVar::pt: {
+    NBins = nptBinsBs;
+    std::copy(ptbinsvec.begin(), ptbinsvec.end(), varBins);
+    break;
+  }
+  case BinVar::y: {
+    NBins = nyBins_both;
+    std::copy(ybinsvec.begin(), ybinsvec.end(), varBins);
+    break;
+  }
+  case BinVar::mult: {
+    NBins = nmBins_both;
+    std::copy(nmbinsvec.begin(), nmbinsvec.end(), varBins);
+    break;
+  }
+default:
+    break;
+  }
 
 	int TnP = 1;
 
@@ -62,6 +105,7 @@ void CrossSectionAna(int DoTnP){
 	Float_t BmassNew[NCand];
 	Float_t BptNew[NCand];
 	Float_t ByNew[NCand];
+	Int_t nMultNew[NCand];
 	Float_t BEff[NCand];
 	Float_t BEffErr[NCand];
 
@@ -88,6 +132,7 @@ void CrossSectionAna(int DoTnP){
 	EffInfoTree->SetBranchAddress("Bmass",BmassNew);
 	EffInfoTree->SetBranchAddress("By",ByNew);
 	EffInfoTree->SetBranchAddress("Bpt",BptNew);
+	EffInfoTree->SetBranchAddress("nMult",nMultNew);
 	
 	Int_t trackSelection;
 	EffInfoTree->SetBranchAddress("track", &trackSelection);
@@ -147,8 +192,6 @@ void CrossSectionAna(int DoTnP){
 */
 
 
-	double ptBins[NBins + 1];
-
 	int Counts[NBins];
 	int CountsTight[NBins];
 	int CountsLoose[NBins];
@@ -193,126 +236,7 @@ void CrossSectionAna(int DoTnP){
 
 
 	double lumi = 302.3;
-	std::vector<double> ptbinsvec;
 	std::vector<double> corrfactvec;
-
-
-	if(NBins == 1){
-
-
-		ptbinsvec.push_back(10.0);
-		ptbinsvec.push_back(50);
-	}
-
-
-	if(NBins == 3){
-
-		ptbinsvec.push_back(5);
-		ptbinsvec.push_back(15);
-		ptbinsvec.push_back(20);
-		ptbinsvec.push_back(50);
-
-	}
-
-
-	if(NBins == 4){
-
-		ptbinsvec.push_back(7);
-		ptbinsvec.push_back(10);
-		ptbinsvec.push_back(15);
-		ptbinsvec.push_back(20);
-		ptbinsvec.push_back(50);
-
-		/*
-		   corrfactvec.push_back(1.24759);
-		   corrfactvec.push_back(1.05256);
-		   corrfactvec.push_back(1.02614);
-		   corrfactvec.push_back(1.01174);
-		   */
-
-
-	}
-
-	if(NBins == 6){
-
-
-		ptbinsvec.push_back(5);
-		ptbinsvec.push_back(7);		
-		ptbinsvec.push_back(10);
-		ptbinsvec.push_back(15);
-		ptbinsvec.push_back(20);
-		ptbinsvec.push_back(50);
-		ptbinsvec.push_back(100);
-
-
-
-	}
-
-
-
-	if(NBins == 7){
-
-
-		//ptbinsvec.push_back(3);
-		ptbinsvec.push_back(5);
-		ptbinsvec.push_back(7);		
-		ptbinsvec.push_back(10);
-		ptbinsvec.push_back(15);
-		ptbinsvec.push_back(20);
-		ptbinsvec.push_back(30);		
-
-		ptbinsvec.push_back(50);
-	//	ptbinsvec.push_back(100);
-		ptbinsvec.push_back(60);
-
-
-
-	}
-
-
-
-	if(NBins == 9){
-
-		ptbinsvec.push_back(2);
-		ptbinsvec.push_back(3);
-		ptbinsvec.push_back(5);
-		ptbinsvec.push_back(7);		
-		ptbinsvec.push_back(10);
-		ptbinsvec.push_back(15);
-		ptbinsvec.push_back(20);
-		ptbinsvec.push_back(30);
-		ptbinsvec.push_back(50);
-		ptbinsvec.push_back(100);
-
-
-
-	}
-
-	if(NBins == 10){
-
-		ptbinsvec.push_back(1);
-		ptbinsvec.push_back(2);
-		ptbinsvec.push_back(3);
-		ptbinsvec.push_back(5);
-		ptbinsvec.push_back(7);		
-		ptbinsvec.push_back(10);
-		ptbinsvec.push_back(15);
-		ptbinsvec.push_back(20);
-		ptbinsvec.push_back(30);
-		ptbinsvec.push_back(50);
-		ptbinsvec.push_back(100);
-
-
-
-	}
-
-
-
-
-
-	for(int i = 0; i < NBins + 1; i++){
-		ptBins[i] =  ptbinsvec[i];
-	}
 
 	for(int i = 0; i < NBins; i++){
 		Counts[i] = 0;
@@ -430,6 +354,8 @@ void CrossSectionAna(int DoTnP){
 	int XBin;
 	int YBin;
 
+
+  double binVar[1] = {0};
 	for( int i = 0; i < NEvents; i++){
 
 		EffInfoTree->GetEntry(i);
@@ -443,8 +369,24 @@ void CrossSectionAna(int DoTnP){
 
 			for(int k = 0; k < NBins; k++){
 
+        switch (var) {
+        case BinVar::pt: {
+          binVar[j] = BptNew[j];
+          break;
+        }
+        case BinVar::y: {
+          binVar[j] = ByNew[j];
+          break;
+        }
+        case BinVar::mult: {
+          binVar[j] = nMultNew[j];
+          break;
+        }
+        default:
+          break;
+        }
 				//	if((BptNew[j] > ptBins[k] && BptNew[j] < ptBins[k+1] && TMath::Abs(BmassNew[j] - 5.27932) < 0.08  && ((BptNew[j] > 7 && BptNew[j] < 10 && ByNew[j] > 1.5 )||(BptNew[j] > 10)) && (Bmu1Type > -0.1 && Bmu2Type > -0.1)))
-				if(BptNew[j] > ptBins[k] && BptNew[j] < ptBins[k+1] && TMath::Abs(BmassNew[j] - 5.3663) < 0.08 && TMath::Abs(ByNew[j]) < 2.4 && ((BptNew[j] > 5 && BptNew[j] < 10 && ByNew[j] > 1.5 )||(BptNew[j] > 10)) )
+				if(binVar[j] > varBins[k] && binVar[j] < varBins[k+1] && TMath::Abs(BmassNew[j] - 5.3663) < 0.08 && TMath::Abs(ByNew[j]) < 2.4 && ((BptNew[j] > 5 && BptNew[j] < 10 && ByNew[j] > 1.5 )||(BptNew[j] > 10)) )
 				{
 
 
@@ -509,10 +451,10 @@ void CrossSectionAna(int DoTnP){
 	}
 
 
-	TH1D * hInvEff = new TH1D("hInvEff","",NBins,ptBins);
+	TH1D * hInvEff = new TH1D("hInvEff","",NBins,varBins);
 
 
-	hInvEff->GetXaxis()->SetTitle("B^{0}_{s} p_{T} (GeV/c)");
+	hInvEff->GetXaxis()->SetTitle("B^{+} " + titleStr[var] + " (GeV/c)");
 	hInvEff->GetYaxis()->SetTitle("<1/(Eff * Acc)>");
 	hInvEff->GetYaxis()->SetTitleOffset(1.4);
 	hInvEff->GetXaxis()->CenterTitle();
@@ -524,9 +466,9 @@ void CrossSectionAna(int DoTnP){
 	hInvEff->SetMinimum(0);
 
 
-	TH1D * hInvEffSyst = new TH1D("hInvEffSyst","",NBins,ptBins);
+	TH1D * hInvEffSyst = new TH1D("hInvEffSyst","",NBins,varBins);
 
-	hInvEffSyst->GetXaxis()->SetTitle("B^{0}_{s} p_{T} (GeV/c)");
+	hInvEffSyst->GetXaxis()->SetTitle("B^{+} " + titleStr[var] + " (GeV/c)");
 	hInvEffSyst->GetYaxis()->SetTitle("<1/(Eff * Acc)> - BDT Data-MC Weighted");
 	hInvEffSyst->GetYaxis()->SetTitleOffset(1.4);
 	hInvEffSyst->GetXaxis()->CenterTitle();
@@ -537,10 +479,10 @@ void CrossSectionAna(int DoTnP){
 
 	hInvEffSyst->SetMinimum(0);
 
-	TH1D * hEff = new TH1D("hEff","",NBins,ptBins);
+	TH1D * hEff = new TH1D("hEff","",NBins,varBins);
 
 
-	hEff->GetXaxis()->SetTitle("B^{0}_{s} p_{T} (GeV/c)");
+	hEff->GetXaxis()->SetTitle("B^{+} " + titleStr[var] + " (GeV/c)");
 	hEff->GetYaxis()->SetTitle("<(Eff * Acc)>");
 	hEff->GetYaxis()->SetTitleOffset(1.4);
 	hEff->GetXaxis()->CenterTitle();
@@ -552,10 +494,10 @@ void CrossSectionAna(int DoTnP){
 	hEff->SetMinimum(0);
 
 
-	TH1D * hInvEffUp = new TH1D("hInvEffUp","",NBins,ptBins);
+	TH1D * hInvEffUp = new TH1D("hInvEffUp","",NBins,varBins);
 
 
-	hInvEffUp->GetXaxis()->SetTitle("B^{0}_{s} p_{T} (GeV/c)");
+	hInvEffUp->GetXaxis()->SetTitle("B^{+} p_{T} (GeV/c)");
 	hInvEffUp->GetYaxis()->SetTitle("<1./(Eff * Acc)>");
 	hInvEffUp->GetYaxis()->SetTitleOffset(1.4);
 	hInvEffUp->GetXaxis()->CenterTitle();
@@ -567,7 +509,7 @@ void CrossSectionAna(int DoTnP){
 
 
 
-	TH1D * hInvEffDown = new TH1D("hInvEffDown","",NBins,ptBins);
+	TH1D * hInvEffDown = new TH1D("hInvEffDown","",NBins,varBins);
 
 
 	hInvEffDown->GetXaxis()->SetTitle("B^{0}_{s} p_{T} (GeV/c)");
@@ -657,19 +599,6 @@ void CrossSectionAna(int DoTnP){
 		cout << "-----------------------------------------------------------------------------------------------" << endl;
 	}
 
-
-	for(int i = 0 ; i < NBins; i++){
-
-		cout << "--------------------------------------------------  Eff Systematics Uncertainties  -----------------------------------------------" << endl;
-
-
-		cout << "i = " << i << "    NewEffUp =   "  << NewEffUp[i]  <<    "    NewEffDown =   " <<  NewEffDown[i] << endl;
-
-		cout << "i = " << i << "    SystUp =   "  << (NewEffUp[i] - NewEff[i])/ NewEff[i] <<    "    NewEffDown =   " << (NewEff[i] - NewEffDown[i])/NewEff[i] << endl;
-		cout << "-----------------------------------------------------------------------------------------------------------------------------------" << endl;
-	}
-
-	//return;
 
 	hInvEff->SetMaximum(NewEff[0]*1.5);
 	TCanvas *c = new TCanvas("c","c",600,600);
@@ -847,7 +776,8 @@ CorrDiffHisBin
 
 		//TnP Syst DONE//
 
-  TString fYield = "../../henri2022/ROOTfiles/yields_Bs_binned_pt.root";
+  TString fYield = "../../henri2022/ROOTfiles/yields_Bs_binned_" +
+    varInputStr[var] + ".root";
 	TFile * RawYield = new TFile(fYield);
 	RawYield->cd();
 	TH1D * hPt = (TH1D *) RawYield->Get("hPt");
@@ -873,24 +803,33 @@ CorrDiffHisBin
 
 	//	cout << "RawCount = " << RawCount << "  RawCountErr = " << RawCountErr << " NewEff[i] =   " << NewEff[i] << "  NewEffErr[i] =  " << NewEffErr[i] << endl; 
 
-		cout << "CORR YIELD PT:  " <<  RawCount *   NewEff[i]/(BRchain*2 * lumi) << endl;
-		CorrYield = RawCount * (ptBins[i+1] - ptBins[i]) *  NewEff[i]  + CorrYield;
-		CorrYieldErr = ((RawCountErr * (ptBins[i+1] - ptBins[i]) *  NewEff[i]) *(RawCountErr * (ptBins[i+1] - ptBins[i]) *  NewEff[i]) + (RawCount * (ptBins[i+1] - ptBins[i]) *  NewEffErr[i]) * (RawCount * (ptBins[i+1] - ptBins[i]) *  NewEffErr[i]))  + CorrYieldErr;
+		cout << "CORR YIELD " + varStr[var] + ": " <<  RawCount *   NewEff[i]/(BRchain*2 * lumi) << endl;
+		CorrYield = RawCount * (varBins[i+1] - varBins[i]) *  NewEff[i]  + CorrYield;
+		CorrYieldErr = ((RawCountErr * (varBins[i+1] - varBins[i]) *  NewEff[i]) *(RawCountErr * (varBins[i+1] - varBins[i]) *  NewEff[i]) + (RawCount * (varBins[i+1] - varBins[i]) *  NewEffErr[i]) * (RawCount * (varBins[i+1] - varBins[i]) *  NewEffErr[i]))  + CorrYieldErr;
 
-		cout << "PrintYield = " << RawCount* (ptBins[i+1] - ptBins[i]) *  NewEff[i] << endl;
+		cout << "PrintYield = " << RawCount* (varBins[i+1] - varBins[i]) *  NewEff[i] << endl;
 
 	}
 
 
 
 	TFile * foutCorr;
-	if(DoTnP == 0)	foutCorr = new TFile("FinalFiles/BsPPCorrYieldPTNoTnP.root","RECREATE");
-	if(DoTnP == 1)	foutCorr = new TFile("FinalFiles/BsPPCorrYieldPT.root","RECREATE");
+  TString corrYieldOut = "FinalFiles/BsPPCorrYield%s";
+  corrYieldOut = TString::Format(corrYieldOut, varStr[var].Data());
+  if(DoTnP == 0)	{
+    corrYieldOut += "NoTnP.root";
+  } else if(DoTnP == 1) {
+    corrYieldOut += ".root";
+  }
+  cout << corrYieldOut << "\n";
+  foutCorr = new TFile(corrYieldOut, "RECREATE");
 
 
-	TH1D * CorrDiffHis = new TH1D("hPtSigma","",NBins,ptBins);
-	CorrDiffHis->GetXaxis()->SetTitle("p_{T} (GeV/c)");
-	CorrDiffHis->GetYaxis()->SetTitle("d #sigma/d p_{T} (pb GeV^{-1} c)");
+
+	foutCorr->cd();
+	TH1D * CorrDiffHis = new TH1D("hPtSigma","",NBins,varBins);
+	CorrDiffHis->GetXaxis()->SetTitle(titleStr[var] + " (GeV/c)");
+	CorrDiffHis->GetYaxis()->SetTitle("d #sigma/d " + titleStr[var] + " (pb GeV^{-1} c)");
 
 	CorrDiffHis->GetYaxis()->SetTitleOffset(1.3);
 	CorrDiffHis->GetXaxis()->CenterTitle();

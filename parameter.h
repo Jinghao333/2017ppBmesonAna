@@ -8,10 +8,6 @@
 /* 	7, 10, 15, 20, 50 */
 /* }; */
 
-// const unsigned nptBins = 4;
-// const std::array<double, nptBins + 1> ptbinsvec = {
-// 	7, 10, 15, 20, 50
-// };
 const unsigned nptBins = 7;
 const std::array<double, nptBins + 1> ptbinsvec = {
   5, 7, 10, 15, 20, 30, 50, 60};
@@ -19,6 +15,11 @@ const std::array<double, nptBins + 1> ptbinsvec = {
 const unsigned nptBinsBP = 7;
 const std::array<double, nptBinsBP + 1> ptbinsvecBP = {
   5, 7, 10, 15, 20, 30, 50, 60};
+
+const unsigned nptBinsBs = 4;
+const std::array<double, nptBins + 1> ptbinsvecBs = {
+	7, 10, 15, 20, 50
+};
 
 const unsigned nyBins_both = 8;
 const std::array<double, nyBins_both + 1> ybinsvec = {
