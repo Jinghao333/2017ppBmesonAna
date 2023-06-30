@@ -65,7 +65,7 @@ void RAAratio(){
 	for(int i = 0; i < NBins; i++){
         //Bin X position (CENTERED for now)
         BXsecX[i] = (ptbinsvec[i] + ptbinsvec[i + 1]) / 2;
-        BXSecXErrUp[i] = (ptbinsvec[i] - ptbinsvec[i + 1]) / 2;
+        BXSecXErrUp[i] = (ptbinsvec[i+1] - ptbinsvec[i]) / 2;
         BXSecXErrDown[i] = BXSecXErrUp[i];
         //Bin X position (CENTERED for now)
         //BS
@@ -83,20 +83,6 @@ void RAAratio(){
 		BPXSecPPYErrDownRatio[i] = BPXSecPPYErrDown[i]/BPXsecPPY[i];
         //BP
 	}
-
-    //PbPb PbPb PbPb PbPb PbPb PbPb PbPb PbPb PbPb PbPb
-	float BPXSecPbPbYErrUp[NBins];
-	float BPXSecPbPbYErrDown[NBins];
-    float BsXSecPbPbYErrUp[NBins];
-	float BsXSecPbPbYErrDown[NBins];
-
-	for(int i = 0; i < NBins; i++){
-        BPXSecPbPbYErrUp[i] = BPXSecPbPbYErrUpRatio[i] * BPXsecPbPbY[i];
-		BPXSecPbPbYErrDown[i] = BPXSecPbPbYErrDownRatio[i] * BPXsecPbPbY[i];
-        BsXSecPbPbYErrUp[i] = BsXSecPbPbYErrUpPercent[i] * BsXsecPbPbY[i];
-		BsXSecPbPbYErrDown[i] = BsXSecPbPbYErrDownPercent[i] * BsXsecPbPbY[i];
-    }
-    //PbPb PbPb PbPb PbPb PbPb PbPb PbPb PbPb PbPb PbPb
 
 //UNCERTANTIES
 
@@ -122,8 +108,8 @@ void RAAratio(){
   TGraph* trackSelSyst = (TGraph *) fTrackSelError.Get("bp_track_sel_error");
 
   // percent error
-	float BPTrackingSyst[NBins] = {[0 ... NBins - 1] = 5};
-	float BsTrackingSyst[NBins] = {[0 ... NBins - 1] = 10};
+	float BPTrackingSyst[NBins] = {[0 ... NBins - 1] = 2.4};
+	float BsTrackingSyst[NBins] = {[0 ... NBins - 1] = 4.8};
 
 	float BPMCDataSyst[NBins];
 	float BPPDFSyst[NBins];
@@ -162,6 +148,9 @@ void RAAratio(){
 	float BPTotalSystDownRatio[NBins];
 	float BPTotalSystUpRatio[NBins];
 
+    float BP_TOTAL_SYST_DoubleRAA[NBins];
+    float Bs_TOTAL_SYST_DoubleRAA[NBins];
+
 	for(int i = 0; i < NBins; i++){
 		BsTotalSystDownRatio[i] = TMath::Sqrt(TMath::Power(BsTrackingSyst[i], 2) + TMath::Power(BsMCDataSyst[i], 2) +
                                           TMath::Power(BsPDFSyst[i], 2) + TMath::Power(BsTrackSelSyst[i], 2) +
@@ -172,30 +161,17 @@ void RAAratio(){
                                           TMath::Power(BPPDFSyst[i], 2) + TMath::Power(BPTrackSelSyst[i], 2) +
                                           TMath::Power(BPPtShapeSyst[i], 2) + TMath::Power(BPTnPSystDown[i], 2)) / 100;
 		BPTotalSystUpRatio[i] = BPTotalSystDownRatio[i];
+
+
+//for Bs one of the track unc survives -> use bp unc which only has 1 track
+        Bs_TOTAL_SYST_DoubleRAA[i] = TMath::Sqrt(/*TMath::Power(BPTrackingSyst[i], 2)+*/ TMath::Power(BsMCDataSyst[i], 2) +
+                                          TMath::Power(BsPDFSyst[i], 2) + TMath::Power(BsTrackSelSyst[i], 2) +
+                                          TMath::Power(BsPtShapeSyst[i], 2) + TMath::Power(BsTnPSystDown[i], 2)) / 100;
+        BP_TOTAL_SYST_DoubleRAA[i] = TMath::Sqrt( TMath::Power(BPMCDataSyst[i], 2) +
+                                          TMath::Power(BPPDFSyst[i], 2) + TMath::Power(BPTrackSelSyst[i], 2) +
+                                          TMath::Power(BPPtShapeSyst[i], 2) + TMath::Power(BPTnPSystDown[i], 2)) / 100;
 	}
 
-    float BsXSecPPYSystUp[NBins];
-	float BsXSecPPYSystDown[NBins];
-	float BPXSecPPYSystUp[NBins];
-	float BPXSecPPYSystDown[NBins];
-
-	for(int i = 0; i < NBins; i++){
-		BsXSecPPYSystUp[i] = BsXsecPPY[i] * BsTotalSystUpRatio[i];
-		BsXSecPPYSystDown[i] = BsXsecPPY[i] * BsTotalSystDownRatio[i];
-        BPXSecPPYSystUp[i] = BPXsecPPY[i] * ( BPTotalSystUpRatio[i]);
-		BPXSecPPYSystDown[i] = BPXsecPPY[i] * (BPTotalSystDownRatio[i] );
-	}
-
-	float BPXSecPbPbYSystUp[NBins];
-	float BPXSecPbPbYSystDown[NBins];
-	float BsXSecPbPbYSystUp[NBins];
-	float BsXSecPbPbYSystDown[NBins];
-	for(int i = 0; i < NBins; i++){
-		BPXSecPbPbYSystDown[i] = (BPXSecPbPbYSystDownRatio[i]) * BPXsecPbPbY[i];
-		BPXSecPbPbYSystUp[i] = (BPXSecPbPbYSystUpRatio[i]) * BPXsecPbPbY[i];
-		BsXSecPbPbYSystDown[i] = (BsXSecPbPbYSystDownPercent[i]) * BsXsecPbPbY[i];
-		BsXSecPbPbYSystUp[i] = (BsXSecPbPbYSystUpPercent[i]) * BsXsecPbPbY[i];
-	}
 
 //UNCERTANTIES
 
@@ -231,7 +207,15 @@ void RAAratio(){
 	float BPRAAYErrUpRatio[NBins];
 	float BPRAAYErrDownRatio[NBins];
 
+    float BPRAAYSystUp_DR;
+    float BPRAAYSystDown_DR;
+    float BsRAAYSystUp_DR;
+    float BsRAAYSystDown_DR;
 
+    float BPRAAYSyst_upDR[NBins];
+    float BsRAAYSyst_upDR[NBins];
+    float BPRAAYSyst_downDR[NBins];
+    float BsRAAYSyst_downDR[NBins];
 
 	for(int i = 0; i < NBins; i++){
 
@@ -248,13 +232,19 @@ void RAAratio(){
         BPRAAYSystDownRatio[i] = BPRAAYSystDown[i]/BPRAAY[i];
 
 		BsRAAYErrUp[i] = BsRAAY[i] * TMath::Sqrt(BsXSecPbPbYErrUpPercent[i] * BsXSecPbPbYErrUpPercent[i] + BsXSecPPYErrUpPercent[i] * BsXSecPPYErrUpPercent[i]);
-		BsRAAYErrDown[i] = BsRAAY[i] * TMath::Sqrt(BsXSecPbPbYErrDownPercent[i] * BsXSecPbPbYErrDownPercent[i] + BsXSecPPYErrDownPercent[i] * BsXSecPPYErrDownPercent[i]);
+		BsRAAYErrDown[i]  = BsRAAY[i] * TMath::Sqrt(BsXSecPbPbYErrDownPercent[i] * BsXSecPbPbYErrDownPercent[i] + BsXSecPPYErrDownPercent[i] * BsXSecPPYErrDownPercent[i]);
 		BsRAAYSystDown[i] = BsRAAY[i] * TMath::Sqrt(BsXSecPbPbYSystDownPercent[i] * BsXSecPbPbYSystDownPercent[i] + BsTotalSystDownRatio[i] * BsTotalSystDownRatio[i]);
-		BsRAAYSystUp[i] = BsRAAY[i] * TMath::Sqrt(BsXSecPbPbYSystUpPercent[i] * BsXSecPbPbYSystUpPercent[i] + BsTotalSystUpRatio[i] * BsTotalSystUpRatio[i]);
+		BsRAAYSystUp[i]   = BsRAAY[i] * TMath::Sqrt(BsXSecPbPbYSystUpPercent[i] * BsXSecPbPbYSystUpPercent[i] + BsTotalSystUpRatio[i] * BsTotalSystUpRatio[i]);
         BsRAAYErrUpRatio[i] = BsRAAYErrUp[i]/BsRAAY[i];
         BsRAAYErrDownRatio[i] = BsRAAYErrDown[i]/BsRAAY[i];
         BsRAAYSystUpRatio[i] = BsRAAYSystUp[i]/BsRAAY[i];
         BsRAAYSystDownRatio[i] = BsRAAYSystDown[i]/BsRAAY[i];
+
+//for double ratios
+		BPRAAYSyst_upDR[i] = BPRAAY[i] * TMath::Sqrt( BPXSecPbPbYSystUp_DR_Percent[i] * BPXSecPbPbYSystUp_DR_Percent[i] + BP_TOTAL_SYST_DoubleRAA[i] * BP_TOTAL_SYST_DoubleRAA[i]);
+		BsRAAYSyst_upDR[i] = BsRAAY[i] * TMath::Sqrt( BsXSecPbPbYSystUp_DR_Percent[i] * BsXSecPbPbYSystUp_DR_Percent[i] + Bs_TOTAL_SYST_DoubleRAA[i] * Bs_TOTAL_SYST_DoubleRAA[i]);
+        BPRAAYSyst_downDR[i] = BPRAAY[i] * TMath::Sqrt( BPXSecPbPbYSystDown_DR_Percent[i] * BPXSecPbPbYSystDown_DR_Percent[i] + BP_TOTAL_SYST_DoubleRAA[i] * BP_TOTAL_SYST_DoubleRAA[i]);
+		BsRAAYSyst_downDR[i] = BsRAAY[i] * TMath::Sqrt( BsXSecPbPbYSystDown_DR_Percent[i] * BsXSecPbPbYSystDown_DR_Percent[i] + Bs_TOTAL_SYST_DoubleRAA[i] * Bs_TOTAL_SYST_DoubleRAA[i]);
 	}
 // RAA VALUES  
 
@@ -327,6 +317,12 @@ float zero1[1] = {0};
 	Unity->SetLineWidth(2);
 	Unity->SetLineStyle(2);
 	Unity->SetLineColor(1);
+
+	TLatex *lat = new TLatex();
+	lat->SetNDC();
+	lat->SetTextSize(0.025); 
+	lat->SetTextFont(42);
+
 //PLOTS PLOTS PLOTS
 
 // DRAW B+ RAA vs 2015 RAA
@@ -386,14 +382,23 @@ BPRAAGraphSyst2015->SetLineColor(kOrange+1);
 	BPRAAGraph_low_just_marker->Draw("epSAME");
 	Unity->Draw("SAME");
 	
-    TLegend* leg1 = new TLegend(0.65,0.77,0.9,0.85,NULL,"brNDC");
-        leg1->AddEntry((TObject*)0, "B^{+}", "");
-	leg1->SetBorderSize(0);
-	leg1->SetFillStyle(0);
-	leg1->AddEntry(BPRAAGraph,"2018 PbPb + 2017 pp","P");
-	leg1->AddEntry(BPRAAGraph_low,"2018 PbPb + 2017 pp (|y|>1.5)","P");
-	leg1->AddEntry(BPRAAGraph2015,"2015 PbPb + 2015 pp","P");
-	leg1->Draw("same");
+	lat->DrawLatex(0.65,0.58 ,Form("global Unc. #pm %.1f%%",2.4));
+	lat->DrawLatex(0.15,0.92 , "CMS work in progress");
+
+        TLegend* leg = new TLegend(0.6,0.62,0.9,0.85,NULL,"brNDC");
+        leg->SetBorderSize(0);
+        leg->SetFillStyle(0);
+        leg->AddEntry((TObject*)0, "B^{+}", "C");
+        leg->AddEntry((TObject*)0, "2018 PbPb + 2017 pp", "");
+        leg->AddEntry((TObject*)0, "Cent. 0-90%", "");
+        leg->AddEntry(BPRAAGraph,"|y|<2.4","P");
+        leg->AddEntry(BPRAAGraph_low,"|y|>1.5","P");
+        leg->AddEntry((TObject*)0, "", "");
+        leg->AddEntry((TObject*)0, "2015 PbPb + 2015 pp", "");
+        leg->AddEntry((TObject*)0, "Cent. 0-100%", "");
+	    leg->AddEntry(BPRAAGraph2015,"|y|<2.4","P");
+        leg->SetTextSize(0.025);
+        leg->Draw("same");      
 
 	c2->SaveAs("RAAPlots/BPRAACompairson.pdf");
 // DRAW B+ RAA vs 2015 RAA
@@ -421,13 +426,15 @@ BPRAAGraphSyst2015->SetLineColor(kOrange+1);
 	BsRAAGraph_low_bs ->SetMarkerSize(1);
 	BsRAAGraphSyst_low_bs ->SetFillColorAlpha(kBlue-3,0.5);
 	BsRAAGraphSyst_low_bs ->SetLineColor(kBlue-3);
-	BsRAAGraph_bs->SetLineColor(kBlue+2);
+	
+    BsRAAGraph_bs->SetLineColor(kBlue+2);
 	BsRAAGraph_bs->SetMarkerStyle(20);
 	BsRAAGraph_bs->SetMarkerSize(1);
 	BsRAAGraph_bs->SetMarkerColor(kBlue+2);
 	BsRAAGraphSyst_bs->SetFillColorAlpha(kBlue-3,0.5);
 	BsRAAGraphSyst_bs->SetLineColor(kBlue-3);
-	BsRAAGraph2015_bs->SetLineColor(kOrange+1);
+	
+    BsRAAGraph2015_bs->SetLineColor(kOrange+1);
 	BsRAAGraph2015_bs->SetMarkerColor(kOrange+1);
 	BsRAAGraph2015_bs->SetMarkerStyle(21);
 	BsRAAGraph2015_bs->SetMarkerSize(1);
@@ -454,14 +461,24 @@ BPRAAGraphSyst2015->SetLineColor(kOrange+1);
         BsRAAGraph_low_just_marker_bs->Draw("epSAME");
         Unity->Draw("SAME");
 
-        TLegend* leg2 = new TLegend(0.65,0.77,0.9,0.85,NULL,"brNDC");
-        leg2->AddEntry((TObject*)0, "B^{0}_{s}", "");
+        lat->DrawLatex(0.65,0.57 ,Form("global Unc. #pm %.1f%%",2.4));
+	lat->DrawLatex(0.15,0.92 , "CMS work in progress");
+
+        TLegend* leg2 = new TLegend(0.6,0.62,0.9,0.85,NULL,"brNDC");
         leg2->SetBorderSize(0);
         leg2->SetFillStyle(0);
-        leg2->AddEntry(BsRAAGraph_bs,"2018 PbPb + 2017 pp","P");
-        leg2->AddEntry(BsRAAGraph_low_bs,"2018 PbPb + 2017 pp (|y|>1.5)","P");
-        leg2->AddEntry(BsRAAGraph2015_bs,"2015 PbPb + 2015 pp","P");
-        leg2->Draw("same");
+        leg2->AddEntry((TObject*)0, "B_{s}^{0}", "C");
+        leg2->AddEntry((TObject*)0, "2018 PbPb + 2017 pp", "");
+        leg2->AddEntry((TObject*)0, "Cent. 0-90%", "");
+        leg2->AddEntry(BsRAAGraph_bs,"|y|<2.4","P");
+        leg2->AddEntry(BsRAAGraph_low_bs,"|y|>1.5","P");
+        leg2->AddEntry((TObject*)0, "", "");
+        leg2->AddEntry((TObject*)0, "2015 PbPb + 2015 pp", "");
+        leg2->AddEntry((TObject*)0, "Cent. 0-100%", "");
+	    leg2->AddEntry(BsRAAGraph2015_bs,"|y|<2.4","P");
+        leg2->SetTextSize(0.025);
+        leg2->Draw("same");      
+
 
         c2->SaveAs("RAAPlots/BsRAAComparison.pdf");
 // DRAW Bs RAA vs 2015 RAA
@@ -487,17 +504,25 @@ BPRAAGraphSyst2015->SetLineColor(kOrange+1);
         BsRAAGraph_low_just_marker_bs->Draw("epSAME");
         Unity->Draw("SAME");
 
-        TLegend* leg3 = new TLegend(0.65,0.71,0.9,0.85,NULL,"brNDC");
+
+        TLegend* leg3 = new TLegend(0.55,0.59,0.9,0.85,NULL,"brNDC");
         leg3->SetBorderSize(0);
         leg3->SetFillStyle(0);
-        leg3->AddEntry((TObject*)0, "B^{+}", "");
-        leg3->AddEntry(BsRAAGraph_bs,"2018 PbPb + 2017 pp","P");
-        leg3->AddEntry(BsRAAGraph_low_bs,"2018 PbPb + 2017 pp (|y|>1.5)","P");
+        leg3->AddEntry((TObject*)0, "B^{0}_{s} 2018 PbPb + 2017 pp", "");
+        leg3->AddEntry((TObject*)0, "Cent. 0-90%", "");
+        leg3->AddEntry(BsRAAGraph_bs,"|y|<2.4","P");
+        leg3->AddEntry(BsRAAGraph_low_bs,"|y|>1.5","P");
         leg3->AddEntry((TObject*)0, "", "");
-        leg3->AddEntry((TObject*)0, "B^{0}_{s}", "");
-	    leg3->AddEntry(BPRAAGraph,"2018 PbPb + 2017 pp","P");
-	    leg3->AddEntry(BPRAAGraph_low,"2018 PbPb + 2017 pp (|y|>1.5)","P");
-        leg3->Draw("same");        
+        leg3->AddEntry((TObject*)0, "B^{+} 2018 PbPb + 2017 pp", "");
+        leg3->AddEntry((TObject*)0, "Cent. 0-90%", "");
+        leg3->AddEntry(BPRAAGraph,"|y|<2.4","P");
+        leg3->AddEntry(BPRAAGraph_low,"|y|>1.5","P");        
+        leg3->SetTextSize(0.025);
+        leg3->Draw("same");      
+
+        lat->DrawLatex(0.6,0.5 ,Form("global Unc. #pm %.1f%%",2.4));
+	lat->DrawLatex(0.15,0.92 , "CMS work in progress");
+    
         
         c2->SaveAs("RAAPlots/Bs_BP_RAA.pdf");
 
@@ -514,23 +539,28 @@ float DR_RAAYSystDown_high[NBins_high];
 float DR_RAAYSystUp_high[NBins_high];
 float DR_RAAYErrDown_low[NBins_low] ={sqrtf( pow(DR_RAAY_low[0],2) * ( pow(BsRAAYErrDown_low[0]/BsRAAY_low[0] ,2) + pow(BPRAAYErrDown_low[0]/BPRAAY_low[0] ,2) ))};
 float DR_RAAYErrUp_low[NBins_low]   ={sqrtf( pow(DR_RAAY_low[0],2) * ( pow(BsRAAYErrUp_low[0]/BsRAAY_low[0]   ,2) + pow(BPRAAYErrUp_low[0]/BPRAAY_low[0]   ,2) ))};
-float DR_RAAYSystDown_low[NBins_low]={sqrtf( pow(DR_RAAY_low[0],2) * ( pow(BsRAAYSystDown_low[0]/BsRAAY_low[0],2) + pow(BPRAAYSystDown_low[0]/BPRAAY_low[0],2) ))};
-float DR_RAAYSystUp_low[NBins_low]  ={sqrtf( pow(DR_RAAY_low[0],2) * ( pow(BsRAAYSystUp_low[0]/BsRAAY_low[0]  ,2) + pow(BPRAAYSystUp_low[0]/BPRAAY_low[0]  ,2) ))};
+
+
+float DR_RAAYSystDown_low[NBins_low]={sqrtf( pow(DR_RAAY_low[0],2) * ( pow(BsRAAYSyst_downDR[0]/BsRAAY_low[0],2) + pow(BPRAAYSyst_downDR[0]/BPRAAY_low[0],2) ))};
+float DR_RAAYSystUp_low[NBins_low]  ={sqrtf( pow(DR_RAAY_low[0],2) * ( pow(BsRAAYSyst_upDR[0]/BsRAAY_low[0]  ,2) + pow(BPRAAYSyst_upDR[0]/BPRAAY_low[0]  ,2) ))};
 
 for (int i=0; i<NBins_high; i++){
     DR_RAAY_high[i]=BsRAAY_high[i]/BPRAAY_high[i];
     DR_RAAYErrDown_high[i] = sqrtf( pow(DR_RAAY_high[i],2) * ( pow(BsRAAYErrDown_high[i]/BsRAAY_high[i] ,2) + pow(BPRAAYErrDown_high[i]/BPRAAY_high[i] ,2) ));
     DR_RAAYErrUp_high[i]   = sqrtf( pow(DR_RAAY_high[i],2) * ( pow(BsRAAYErrUp_high[i]/BsRAAY_high[i]   ,2) + pow(BPRAAYErrUp_high[i]/BPRAAY_high[i]   ,2) ));
-    DR_RAAYSystDown_high[i]= sqrtf( pow(DR_RAAY_high[i],2) * ( pow(BsRAAYSystDown_high[i]/BsRAAY_high[i],2) + pow(BPRAAYSystDown_high[i]/BPRAAY_high[i],2) ));
-    DR_RAAYSystUp_high[i]  = sqrtf( pow(DR_RAAY_high[i],2) * ( pow(BsRAAYSystUp_high[i]/BsRAAY_high[i]  ,2) + pow(BPRAAYSystUp_high[i]/BPRAAY_high[i]  ,2) ));
+    
+    
+    DR_RAAYSystDown_high[i]= sqrtf( pow(DR_RAAY_high[i],2) * ( pow(BsRAAYSyst_downDR[i+1]/BsRAAY_high[i],2) + pow(BPRAAYSyst_downDR[i+1]/BPRAAY_high[i],2) ));
+    DR_RAAYSystUp_high[i]  = sqrtf( pow(DR_RAAY_high[i],2) * ( pow(BsRAAYSyst_upDR[1+i]/BsRAAY_high[i]  ,2) + pow(BPRAAYSyst_upDR[i+1]/BPRAAY_high[i]  ,2) ));
 }
 //Compute the Ratios
 
 
 TGraphAsymmErrors * DOUBLERAAGraph     = new TGraphAsymmErrors(NBins_high, RAAX_high, DR_RAAY_high, RAAXErrDown_high, RAAXErrUp_high, DR_RAAYErrDown_high, DR_RAAYErrUp_high);
-TGraphAsymmErrors * DOUBLERAAGraphSyst = new TGraphAsymmErrors(NBins_high, RAAX_high, DR_RAAY_high, RAAXErrDown_high, RAAXErrUp_high, DR_RAAYSystDown_high, DR_RAAYSystUp_high);
 TGraphAsymmErrors * DOUBLERAAGraph_low     = new TGraphAsymmErrors(NBins_low, RAAX_low, DR_RAAY_low, RAAXErrDown_low, RAAXErrUp_low,DR_RAAYErrDown_low, DR_RAAYErrUp_low);
 TGraphAsymmErrors * DOUBLERAAGraph_low_just_marker = new TGraphAsymmErrors(NBins_low, RAAX_low, DR_RAAY_low, zero1, zero1, zero1, zero1);
+
+TGraphAsymmErrors * DOUBLERAAGraphSyst = new TGraphAsymmErrors(NBins_high, RAAX_high, DR_RAAY_high, RAAXErrDown_high, RAAXErrUp_high, DR_RAAYSystDown_high, DR_RAAYSystUp_high);
 TGraphAsymmErrors * DOUBLERAAGraphSyst_low = new TGraphAsymmErrors(NBins_low, RAAX_low, DR_RAAY_low, RAAXErrDown_low, RAAXErrUp_low,DR_RAAYSystDown_low, DR_RAAYSystUp_low);
 
 
@@ -551,6 +581,8 @@ DOUBLERAAGraph ->SetMarkerSize(1);
 DOUBLERAAGraphSyst ->SetFillColorAlpha(kRed+1,0.5);
 DOUBLERAAGraphSyst ->SetLineColor(kRed+1);
 
+	lat->DrawLatex(0.15,0.92 , "CMS work in progress");
+
         HisEmptyRAAr->Draw();
         DOUBLERAAGraphSyst_low->Draw("5same");
         DOUBLERAAGraphSyst->Draw("5same");
@@ -565,10 +597,10 @@ DOUBLERAAGraphSyst ->SetLineColor(kRed+1);
         leg4->SetFillStyle(0);
         leg4->AddEntry(DOUBLERAAGraph,"|y|<2.4","P");
         leg4->AddEntry(DOUBLERAAGraph_low,"|y|>1.5","P");
+	    leg4->SetTextSize(0.025);
         leg4->Draw("same");
 
         c2->SaveAs("RAAPlots/DOUBLE_RATIOS.pdf");
-
 
 // BDOUBLE RATIOS //
 
@@ -604,7 +636,9 @@ DOUBLERAAGraphSyst_comp ->SetLineColor(kMagenta-8);
         DOUBLERAAGraph_low_just_marker->Draw("epSAME");
         Unity->Draw("SAME");
 
-        TLegend* leg5 = new TLegend(0.65,0.65,0.9,0.85,NULL,"brNDC");
+        	lat->DrawLatex(0.15,0.92 , "CMS work in progress");
+
+        TLegend* leg5 = new TLegend(0.6,0.65,0.9,0.85,NULL,"brNDC");
         leg5->SetBorderSize(0);
         leg5->SetFillStyle(0);
         leg5->AddEntry((TObject*)0, "2018 PbPb + 2017 pp", "");
@@ -615,9 +649,11 @@ DOUBLERAAGraphSyst_comp ->SetLineColor(kMagenta-8);
         leg5->AddEntry((TObject*)0, "2015 PbPb + 2015 pp", "");
         leg5->AddEntry((TObject*)0, "Cent. 0-100%", "");
 	    leg5->AddEntry(DOUBLERAAGraph_comp,"|y|<2.4","P");
+        leg5->SetTextSize(0.025);
         leg5->Draw("same");        
         
         c2->SaveAs("RAAPlots/DOUBLE_R_COMP_17_15.pdf");
+
 
 
 // BDOUBLE RATIOS vs 2015 //
