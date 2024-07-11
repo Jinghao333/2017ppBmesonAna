@@ -14,12 +14,12 @@ DOANALYSISPbPb_MATCHING_Bs_BINS_BP_y=0
 DOANALYSISPbPb_MATCHING_Bs_BINS_BP_y_TRK=0
 
 #Data and MC Samples
-MC_BP="/data3/tasheng/presel/BPMC_nom.root"
-Data_BP="/data3/tasheng/presel/BPData_nom.root"
+MC_BP="/lstore/cms/henrique/Hadronization/data_mc/BPMC_nom.root"
+Data_BP="/lstore/cms/henrique/Hadronization/data_mc/BPData_nom.root"
 #MC_BP="/data3/smcosta/data/BPMC_nom.root"
 #Data_BP="/data3/smcosta/data/BPData_nom.root"
 
-INPUTJPSI="/data3/tasheng/presel/jpsinp_nom.root"
+INPUTJPSI="//lstore/cms/henrique/Hadronization/data_mc/jpsinp_nom.root"
 #INPUTJPSI="/data3/smcosta/data/jpsinp_nom.root"
 #Data and MC Samples
 

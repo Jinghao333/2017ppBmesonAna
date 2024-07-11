@@ -14,7 +14,7 @@
 void read_samples(RooWorkspace& w, std::vector<TString> label, TString fName, TString treeName, TString sample, TString variable, int bsbp);
 
 // PDF VARIATION FOR SYST STUDIES
-int syst_study=0;
+int syst_study=1;
 
 // VALIDATION STUDIES
 int val=0;
@@ -127,7 +127,8 @@ void roofitB(TString tree = "ntphi", int full = 0, TString inputdata = "", TStri
 	std::vector<std::string> background;
 	if (tree == "ntKp"){background = {"1st", "2nd", "mass_range","jpsi_sig"};} 
 	else if (tree == "ntphi"){background = {"1st", "2nd", "mass_range"};}
-	std::vector<std::string> signal = {"3gauss", "fixed", "gauss_cb"};
+	//std::vector<std::string> signal = {"3gauss", "fixed", "gauss_cb", "2cb"};
+	std::vector<std::string> signal = {"2cb"};
 	std::vector<std::vector<double>> background_syst;
 	std::vector<std::vector<double>> signal_syst;
 	std::vector<std::vector<double>> general_syst;
@@ -740,7 +741,8 @@ void roofitB(TString tree = "ntphi", int full = 0, TString inputdata = "", TStri
 		legsig->SetTextFont(42);
 		legsig->SetFillStyle(0);
 		TMultiGraph* m_sig= new TMultiGraph();
-		const char* siglabel[3]={"Triple Gaussian", "Fixed Mean", "CB+Gaussian"};
+		//const char* siglabel[3]={"Triple Gaussian", "Fixed Mean", "CB+Gaussian"};
+		const char* siglabel[4]={"Triple Gaussian", "Fixed Mean", "CB+Gaussian", "Double CB"};
 		double y_max_sig=0;
 		for (int j=0;j<(int)(signal.size());j++){
 			Double_t y[_nBins];
@@ -1267,12 +1269,10 @@ void read_samples(RooWorkspace& w, std::vector<TString> label, TString fName, TS
 
 	TFile* fin = new TFile(fName);
 	TTree* t1 = (TTree*) fin->Get(treeName);
-
 	//Data Variables
 	RooArgList arg_list ("arg_list");
 	arg_list.add(*(w.var("Bmass")));
 	for(auto lab : label){arg_list.add(*(w.var(lab)));}
-
 	RooDataSet* data_s = new RooDataSet(sample, sample, t1, arg_list);
 
 	//CUTS CUTS CUTS CUTS 

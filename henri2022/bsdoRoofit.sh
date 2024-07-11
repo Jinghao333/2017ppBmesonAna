@@ -1,5 +1,5 @@
 DOANALYSISPbPb_FULL_BS=0
-DOANALYSISPbPb_BINNED_PT_BS=0
+DOANALYSISPbPb_BINNED_PT_BS=1
 DOANALYSISPbPb_BINNED_Y_BS=0
 DOANALYSISPbPb_BINNED_MULT_BS=0
 
@@ -8,10 +8,10 @@ DOANALYSISPbPb_BINNED_Y_BS_TRK=0
 DOANALYSISPbPb_BINNED_MULT_BS_TRK=0
 
 #Data and MC Samples
-MC_Bs="/data3/tasheng/presel/BsMC_nom.root"
-Data_Bs="/data3/tasheng/presel/BsData_nom.root"
-#MC_Bs="/lstore/cms/henrique/dados/BsMC_nom.root"
-#Data_Bs="/lstore/cms/henrique/dados/BsData_nom.root"
+MC_Bs="~/data_mc/BsMC_nom.root"
+#lstore/cms/henrique/Hadronization/data_mc/BsMC_nom.root"
+Data_Bs="~/data_mc/BsData_nom.root"
+#/lstore/cms/henrique/Hadronization/data_mc/BsData_nom.root"
 #Data and MC Samples
 
 #NEW NMB from https://twiki.cern.ch/twiki/pub/CMS/HINUpsilonRaa2016/Jason_MinBiasCounting_2017-02-02.pdf

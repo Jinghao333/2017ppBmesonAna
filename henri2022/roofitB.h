@@ -98,17 +98,22 @@ RooFitResult *fit(TString variation, TString pdf,TString tree, TCanvas* c, TCanv
 	RooRealVar sigma2MC(Form("sigma2MC%d_%s",_count, pdf.Data()),"",0.03,0.01,0.06) ;
 	RooRealVar sigma3MC(Form("sigma3MC%d_%s",_count, pdf.Data()),"",0.01,0.005,0.2) ;
 	RooRealVar sigma4cbMC(Form("sigma4cbMC%d_%s",_count, pdf.Data()),"",0.0266,0.01,0.5) ;
+	RooRealVar sigma5cbMC(Form("sigma5cbMC%d_%s",_count, pdf.Data()),"",0.0266,0.01,0.5) ;
 	RooRealVar alphaMC(Form("alphaMC%d_%s",_count,pdf.Data()),"",4.,0,15);
 	RooRealVar nMC(Form("nMC_%d_%s", _count, pdf.Data()),"",10,-100,200);
+	RooRealVar alphaMC2(Form("alphaMC2%d_%s",_count,pdf.Data()),"",4.,0,15);
+	RooRealVar nMC2(Form("nMC2_%d_%s", _count, pdf.Data()),"",10,-100,200);
 	RooRealVar* scale = new RooRealVar("scale","scale",1,0,2);
 	RooProduct scaled_sigma1MC(Form("scaled_sigma1MC%d_%s",_count,pdf.Data()),"scaled_sigma1MC", RooArgList(*scale,sigma1MC));
 	RooProduct scaled_sigma2MC(Form("scaled_sigma2MC%d_%s",_count,pdf.Data()),"scaled_sigma2MC", RooArgList(*scale,sigma2MC));
 	RooProduct scaled_sigma3MC(Form("scaled_sigma3MC%d_%s",_count,pdf.Data()),"scaled_sigma3MC", RooArgList(*scale,sigma3MC));
 	RooProduct scaled_sigma4cbMC(Form("scaled_sigma4cbMC%d_%s",_count,pdf.Data()),"scaled_sigma4cbMC", RooArgList(*scale,sigma4cbMC));
+	RooProduct scaled_sigma5cbMC(Form("scaled_sigma5cbMC%d_%s",_count,pdf.Data()),"scaled_sigma5cbMC", RooArgList(*scale,sigma5cbMC));
 	RooGaussian sig1MC(Form("sig1MC%d_%s",_count,pdf.Data()),"",*mass,meanMC,scaled_sigma1MC);  
 	RooGaussian sig2MC(Form("sig2MC%d_%s",_count, pdf.Data()),"",*mass,meanMC,scaled_sigma2MC);  
 	RooGaussian sig3MC(Form("sig3MC%d_%s",_count, pdf.Data()),"",*mass,meanMC,scaled_sigma3MC);  
 	RooCBShape  CBMC(Form("CBMC%d_%s",_count, pdf.Data()),"",*mass,meanMC,scaled_sigma4cbMC, alphaMC, nMC);
+	RooCBShape  CBMC2(Form("CBMC2%d_%s",_count, pdf.Data()),"",*mass,meanMC,scaled_sigma5cbMC, alphaMC2, nMC2);
 	RooRealVar sig1fracMC(Form("sig1fracMC%d_%s",_count, pdf.Data()),"", 0.2, 0.001, 1);
 	RooRealVar sig2fracMC(Form("sig2fracMC%d_%s",_count, pdf.Data()),"", 0.7, 0.001, 1);
 	RooRealVar nsigMC(Form("nsigMC%d_%s",_count, pdf.Data()),"",dsMC->sumEntries(), 0.9*dsMC->sumEntries(), 1.2 * dsMC->sumEntries());
@@ -116,9 +121,10 @@ RooFitResult *fit(TString variation, TString pdf,TString tree, TCanvas* c, TCanv
 	if((variation=="" && pdf=="") || variation== "background" || (variation=="signal" && pdf=="fixed" )) sigMC = new RooAddPdf(Form("sigMC%d_%s",_count,pdf.Data()),"",RooArgList(sig1MC,sig2MC),sig1fracMC);
 	if(variation=="signal" && pdf=="3gauss") sigMC = new RooAddPdf(Form("sigMC%d_%s",_count, pdf.Data()), "", RooArgList(sig1MC, sig2MC, sig3MC), RooArgList(sig1fracMC, sig2fracMC), true);
 	if(variation=="signal" && pdf=="gauss_cb") sigMC = new RooAddPdf(Form("sigMC%d_%s",_count, pdf.Data()), "", RooArgList(sig1MC, CBMC), sig1fracMC);
+	if(variation=="signal" && pdf=="2cb") sigMC = new RooAddPdf(Form("sigMC%d_%s",_count, pdf.Data()), "", RooArgList(CBMC, CBMC2), sig1fracMC);
 
 	RooAddPdf* modelMC;
-	if((variation=="signal" && (pdf=="gauss_cb"|| pdf=="3gauss"|| pdf=="fixed"))||variation=="background") modelMC = new RooAddPdf(Form("modelMC%d_%s",_count, pdf.Data()),"",RooArgList(*sigMC),RooArgList(nsigMC));
+	if((variation=="signal" && (pdf=="gauss_cb"|| pdf=="3gauss"|| pdf=="fixed"|| pdf=="2cb"))||variation=="background") modelMC = new RooAddPdf(Form("modelMC%d_%s",_count, pdf.Data()),"",RooArgList(*sigMC),RooArgList(nsigMC));
 	if(variation =="" && pdf=="") modelMC = new RooAddPdf(Form("modelMC%d_%s",_count, pdf.Data()),"",RooArgList(*sigMC),RooArgList(nsigMC));
 
 //////////ROOFIT ROOFIT ROOFIT  MC MC MC MC 
@@ -319,16 +325,21 @@ if(tree == "ntKp" && variation=="" && pdf==""){
 	RooRealVar sigma2(Form("sigma2%d_%s",_count,pdf.Data()),"",sigma2MC.getVal(),0.01,0.1) ;
 	RooRealVar sigma3(Form("sigma3%d_%s",_count,pdf.Data()),"",sigma3MC.getVal(),0.01,0.1) ;
 	RooRealVar sigma4cb(Form("sigma4cb%d_%s",_count,pdf.Data()),"",sigma4cbMC.getVal(),0.01,0.1) ;
+	RooRealVar sigma5cb(Form("sigma5cb%d_%s",_count,pdf.Data()),"",sigma5cbMC.getVal(),0.01,0.1) ;
 	RooRealVar alpha(Form("alpha%d_%s",_count,pdf.Data()),"",alphaMC.getVal(),0,50);
 	RooRealVar n(Form("n_%d_%s", _count, pdf.Data()),"",nMC.getVal(),0,500);
+	RooRealVar alpha2(Form("alpha2%d_%s",_count,pdf.Data()),"",alphaMC2.getVal(),0,50);
+	RooRealVar n2(Form("n2_%d_%s", _count, pdf.Data()),"",nMC2.getVal(),0,500);
 	RooProduct scaled_sigma1(Form("scaled_sigma1%d_%s",_count,pdf.Data()),"scaled_sigma1", RooArgList(*scale,sigma1));
 	RooProduct scaled_sigma2(Form("scaled_sigma2%d_%s",_count,pdf.Data()),"scaled_sigma2", RooArgList(*scale,sigma2));
 	RooProduct scaled_sigma3(Form("scaled_sigma3%d_%s",_count,pdf.Data()),"scaled_sigma3", RooArgList(*scale,sigma3));
 	RooProduct scaled_sigmacb(Form("scaled_sigmacb%d_%s",_count,pdf.Data()),"scaled_sigmacb", RooArgList(*scale,sigma4cb));
+	RooProduct scaled_sigmacb2(Form("scaled_sigmacb2%d_%s",_count,pdf.Data()),"scaled_sigmacb2", RooArgList(*scale,sigma5cb));
 	RooGaussian sig1(Form("sig1%d_%s",_count,pdf.Data()),"",*mass,mean,scaled_sigma1);  
 	RooGaussian sig2(Form("sig2%d_%s",_count,pdf.Data()),"",*mass,mean,scaled_sigma2);  
 	RooGaussian sig3(Form("sig3%d_%s",_count,pdf.Data()),"",*mass,mean,scaled_sigma3);  
 	RooCBShape  CB(Form("CB%d_%s",_count, pdf.Data()),"",*mass,mean,scaled_sigmacb, alpha, n);
+	RooCBShape  CB2(Form("CB2%d_%s",_count, pdf.Data()),"",*mass,mean,scaled_sigmacb2, alpha2, n2);
 	RooRealVar c1(Form("c1%d_%s",_count,pdf.Data()),"",1.,0.,5.);
 	RooRealVar sig1frac(Form("sig1frac%d_%s",_count,pdf.Data()),"",sig1fracMC.getVal(),0.,1.);
 	RooRealVar sig2frac(Form("sig2frac%d_%s",_count,pdf.Data()),"",sig2fracMC.getVal(),0.,1.);
@@ -337,6 +348,7 @@ if(tree == "ntKp" && variation=="" && pdf==""){
 	if(variation=="signal" && pdf=="3gauss") sig = new RooAddPdf(Form("sig%d_%s",_count,pdf.Data()), "", RooArgList(sig1, sig2, sig3), RooArgList(sig1frac, sig2frac), true);
 	if(variation=="signal" && pdf=="gauss_cb") sig = new RooAddPdf(Form("sig%d_%s",_count,pdf.Data()),"",RooArgList(sig1, CB), sig1frac);
 	if((variation=="" && pdf=="") || variation== "background" || (variation=="signal" && pdf=="fixed")) sig = new RooAddPdf(Form("sig%d_%s",_count,pdf.Data()),"",RooArgList(sig1,sig2),sig1frac);
+	if(variation=="signal" && pdf=="2cb") sig = new RooAddPdf(Form("sig%d_%s",_count,pdf.Data()),"",RooArgList(CB, CB2), sig1frac);	
 ///////////////// SIGNAL FUNCTIONS
 
 
@@ -378,7 +390,7 @@ if(tree == "ntphi"){
 	if(variation=="background" && pdf=="2nd") model = new RooAddPdf(Form("model%d_%s",_count,pdf.Data()),"",RooArgList(*sig,bkg_2nd),RooArgList(nsig,nbkg));
 	if(variation=="background" && pdf=="3rd") model = new RooAddPdf(Form("model%d_%s",_count,pdf.Data()),"",RooArgList(*sig,bkg_3rd),RooArgList(nsig,nbkg));
 	if(variation=="signal" && pdf=="1gauss") model = new RooAddPdf(Form("model%d_%s",_count,pdf.Data()),"",RooArgList(sig1,bkg),RooArgList(nsig,nbkg));
-	if(variation=="signal" && (pdf=="3gauss"|| pdf=="fixed"|| pdf=="gauss_cb" )) model = new RooAddPdf(Form("model%d_%s",_count,pdf.Data()),"",RooArgList(*sig, bkg),RooArgList(nsig, nbkg));
+	if(variation=="signal" && (pdf=="3gauss"|| pdf=="fixed"|| pdf=="gauss_cb" || pdf=="2cb")) model = new RooAddPdf(Form("model%d_%s",_count,pdf.Data()),"",RooArgList(*sig, bkg),RooArgList(nsig, nbkg));
 }
 
 /////////////////BP BP BP BP BP BP BP BP
@@ -409,6 +421,15 @@ if(tree == "ntKp"){
 		n.setConstant();
 		alpha.setConstant();
 	}
+	if(variation=="signal" && pdf=="2cb"){
+		sigma4cb.setConstant();
+		n.setConstant();
+		alpha.setConstant();
+		sigma5cb.setConstant();
+		n2.setConstant();
+		alpha2.setConstant();	
+	}
+
 	if(variation=="signal" && pdf=="fixed") mean.setConstant();
 
 //////////////// SET PARAMETERS FROM MC FITS
@@ -434,7 +455,7 @@ if(tree == "ntKp"){
 					}
    	model->plotOn(frame, Name(Form("bkg%d_%s",_count,pdf.Data())) ,  Components(bkg), Range(fitRange), Precision(1e-6),  DrawOption("L"), LineStyle(7), LineColor(4), LineWidth(1));
 
-	//model->paramOn(frame,Layout(0.2, 0.45, 0.5), Format("NEU",AutoPrecision(2)));
+	model->paramOn(frame,Layout(0.2, 0.45, 0.5), Format("NEU",AutoPrecision(2)));
 	//frame->getAttText()->SetTextSize(0.035);
 	//frame->getAttFill()->SetFillStyle(0);
 	//frame->getAttLine()->SetLineWidth(0);
